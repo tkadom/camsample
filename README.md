@@ -24,8 +24,8 @@ The application currently has a web, and a database container.  For the database
 * docker-compose stop
 
 ## Access Application: ##
-The docker compose will map the web instance port 8080 to localhost 8090.  so it can be accessed by:
-http://localhost:8090/kadom-1.0.0
+The docker compose will map the web instance port 8080 to localhost 8084.  so it can be accessed by:
+http://localhost:8084/kadom-1.0.0
 * login with
 	* username admin/admin
 
