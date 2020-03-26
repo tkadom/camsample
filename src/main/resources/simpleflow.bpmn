@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0r4281j" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.7.1">
+  <bpmn:process id="documentflow" name="Document Processing Flow" isExecutable="true">
+    <bpmn:startEvent id="DocumentArrived" name="Document has Arrived" camunda:formKey="embedded:app:new-work-request.html">
+      <bpmn:outgoing>Flow_0wo6xss</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_0y397m1">
+      <bpmn:incoming>Flow_0zdsakv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1n1g4yz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1z0fe24</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0zdsakv" sourceRef="Activity_16azmko" targetRef="Gateway_0y397m1" />
+    <bpmn:sequenceFlow id="Flow_1n1g4yz" name="Needs Correction" sourceRef="Gateway_0y397m1" targetRef="ManualReview">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${NeedsCorrection == 'true'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_0an11qr">
+      <bpmn:incoming>Flow_1z0fe24</bpmn:incoming>
+      <bpmn:incoming>Flow_10qi4dt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vj7cka</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0vj7cka" sourceRef="Gateway_0an11qr" targetRef="ManualResponse" />
+    <bpmn:sequenceFlow id="Flow_1z0fe24" name="No Errors&#10;&#10;" sourceRef="Gateway_0y397m1" targetRef="Gateway_0an11qr">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${NeedsCorrection == 'false'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0wo6xss" sourceRef="DocumentArrived" targetRef="Activity_16azmko" />
+    <bpmn:endEvent id="DocumentCompleted" name="Document has &#10;Completed&#10;&#10;">
+      <bpmn:incoming>Flow_1a2rmsj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1a2rmsj" sourceRef="ManualResponse" targetRef="DocumentCompleted">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${Reviewed == 'true'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="ManualReview" name="Update Address" camunda:formKey="embedded:app:modify.html" camunda:candidateGroups="Editors">
+      <bpmn:incoming>Flow_1n1g4yz</bpmn:incoming>
+      <bpmn:outgoing>Flow_10qi4dt</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ManualResponse" name="Send Response" camunda:candidateUsers="kadom">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="Reviewed" label="Have you reviewed the changes?" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0vj7cka</bpmn:incoming>
+      <bpmn:outgoing>Flow_1a2rmsj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_10qi4dt" sourceRef="ManualReview" targetRef="Gateway_0an11qr" />
+    <bpmn:serviceTask id="Activity_16azmko" name="Verify Document" camunda:asyncBefore="true" camunda:delegateExpression="${sayHelloDelegate}">
+      <bpmn:incoming>Flow_0wo6xss</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zdsakv</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="documentflow">
+      <bpmndi:BPMNEdge id="Flow_0zdsakv_di" bpmnElement="Flow_0zdsakv">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="405" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n1g4yz_di" bpmnElement="Flow_1n1g4yz">
+        <di:waypoint x="430" y="142" />
+        <di:waypoint x="430" y="250" />
+        <di:waypoint x="490" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="337" y="223" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vj7cka_di" bpmnElement="Flow_0vj7cka">
+        <di:waypoint x="675" y="117" />
+        <di:waypoint x="740" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1z0fe24_di" bpmnElement="Flow_1z0fe24">
+        <di:waypoint x="455" y="117" />
+        <di:waypoint x="625" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="516" y="99" width="48" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wo6xss_di" bpmnElement="Flow_0wo6xss">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a2rmsj_di" bpmnElement="Flow_1a2rmsj">
+        <di:waypoint x="840" y="117" />
+        <di:waypoint x="912" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10qi4dt_di" bpmnElement="Flow_10qi4dt">
+        <di:waypoint x="590" y="250" />
+        <di:waypoint x="650" y="250" />
+        <di:waypoint x="650" y="142" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="DocumentArrived">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="142" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0y397m1_di" bpmnElement="Gateway_0y397m1" isMarkerVisible="true">
+        <dc:Bounds x="405" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0an11qr_di" bpmnElement="Gateway_0an11qr" isMarkerVisible="true">
+        <dc:Bounds x="625" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1odd3nt_di" bpmnElement="ManualReview">
+        <dc:Bounds x="490" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1puu837_di" bpmnElement="ManualResponse">
+        <dc:Bounds x="740" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0s0hdbd_di" bpmnElement="DocumentCompleted">
+        <dc:Bounds x="912" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="894" y="143" width="71" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17oeie3_di" bpmnElement="Activity_16azmko">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

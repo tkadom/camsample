@@ -1,0 +1,15 @@
+spring.datasource: 
+  type: org.postgresql.jdbc2.optional.SimpleDataSource
+  username: admin 
+  password: password
+  url: jdbc:postgresql://app-db:5432/app_staging
+
+camunda.bpm:
+  webapp:
+   index-redirect-enabled: true
+  bpm.admin-user:
+   id: admin 
+   password: admin 
+
+camunda.bpm.authorization:
+      enabled: true
